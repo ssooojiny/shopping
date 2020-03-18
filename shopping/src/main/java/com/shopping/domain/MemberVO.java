@@ -11,7 +11,7 @@ public class MemberVO {
 	private String userAddr1;
 	private String userAddr2;
 	private String userAddr3;
-	private Date regDate;
+	private Date regiDate;
 	private int verify;
 	public String getUserId() {
 		return userId;
@@ -55,11 +55,11 @@ public class MemberVO {
 	public void setUserAddr3(String userAddr3) {
 		this.userAddr3 = userAddr3;
 	}
-	public Date getRegDate() {
-		return regDate;
+	public Date getRegiDate() {
+		return regiDate;
 	}
-	public void setRegDate(Date regDate) {
-		this.regDate = regDate;
+	public void setRegDate(Date regiDate) {
+		this.regiDate = regiDate;
 	}
 	public int getVerify() {
 		return verify;
