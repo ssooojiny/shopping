@@ -20,10 +20,11 @@
 	</insert>
 	
 	<!-- 상품 목록 -->
-	<select id="goodsList" resultType="com.shopping.domain.GoodsVO">
-		select gdsNum, gdsName, cateCode, gdsPrice, gdsStock, gdsDes, gdsImg, gdsDate
-			from tbl_goods
-				order by gdsNum desc
+	<select id="goodsList" resultType="com.shopping.domain.GoodsViewVO">
+		select g.gdsNum, g.gdsName, g.cateCode, c.cateCodeRef, c.cateName, gdsPrice, gdsStock, gdsDes, gdsImg, gdsDate, g.gdsImg, g.gdsThumbImg
+			from tbl_goods g
+				inner join goods_category c
+					on g.cateCode = c.cateCode
 	</select>
 
 	<!-- 상품 조회 -->
