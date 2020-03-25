@@ -25,20 +25,16 @@ public class ShopController {
 	ShopService service;
 	
 	// 카테고리별 상품 리스트
-	@RequestMapping(value="/list", method = RequestMethod.GET)
-	public void getList(@RequestParam("c") int cateCode, @RequestParam("1") int level, Model model) throws Exception {
+	@RequestMapping(value="/list", method=RequestMethod.GET)
+	public void getList(@RequestParam("c") int cateCode,
+						@RequestParam("l") int level, Model model) throws Exception{
 		logger.info("getList() 실행");
 		
 		List<GoodsViewVO> list = null;
+		list = service.list(cateCode, level);
 		
+		model.addAttribute("list", list);
 	}
 	
-	// 상품 조회
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public void getView(@RequestParam("n") int gdsNum, Model model) throws Exception {
-	 logger.info("get view");
-	 
-	 GoodsViewVO view = service.goodsView(gdsNum);
-	 model.addAttribute("view", view);
-	}
+
 }

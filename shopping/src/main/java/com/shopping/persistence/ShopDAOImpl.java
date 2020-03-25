@@ -19,31 +19,27 @@ public class ShopDAOImpl implements ShopDAO {
 	@Inject
 	private SqlSession sql;
 
-
-	// 카테고리별 상품 리스트 : 1차 분류
+	//// 카테고리별 상품 리스트 : 1차분류
 	@Override
 	public List<GoodsViewVO> list(int cateCode, int cateCodeRef) throws Exception {
-			
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		map.put("cateCode", cateCode);
 		map.put("cateCodeRef", cateCodeRef);
-			
-		return sql.selectList(namespace + ".list_1", map);
-	}
 		
-	// 카테고리별 상품 리스트 : 2차 분류
+		return sql.selectList(namespace+".list_1", map);
+	}
+	
+	// 카테고리별 상품 리스트 : 2차분류
 	@Override
 	public List<GoodsViewVO> list(int cateCode) throws Exception {
-			
-		return sql.selectList(namespace + ".list_2", cateCode);
+		return sql.selectList(namespace+".list_2", cateCode);
 	}
 
-	// 상품 조회
-	@Override
-	public GoodsViewVO goodsView(int gdsNum) throws Exception {
-		return sql.selectOne("com.shopping.mappers.adminMapper" + ".goodsView", gdsNum);
-	}
+
+
+	
 
 
 	
