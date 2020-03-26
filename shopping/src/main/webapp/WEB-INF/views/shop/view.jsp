@@ -97,6 +97,38 @@
 		 section.replyList div.userInfo .date { color:#999; display:inline-block; margin-left:10px; }
 		 section.replyList div.replyContent { padding:10px; margin:20px 0; }
 	</style>
+	
+	
+<script>
+// ========================= 댓글 ajax 
+// ajax를 사용하는 이유 : 상세 페이지에는 이미지가 있는데, ajax없이 매번 새로 로딩하면 쓸데없는 데이터 사용이 많아짐
+// script 태그가 head안에 있는 이유 : 재사용하기 위해서!
+function replyList(){
+	var gdsNum = ${view.gdsNum};
+	$.getJSON("/shop/view/replyList"+"?n="+gdsNum, function(reply){
+		var str = "";
+		$(reply).each(function(){
+			console.log(reply);
+			 var repDate = new Date(this.repDate);
+			   repDate = repDate.toLocaleDateString("ko-US");
+			   // 테이블에 저장된 날짜 데이터와 컨트롤러에서 뷰로 보낼때의 날짜 데이터 형식이 다르기 때문에
+			   // toLocaleDateString()으로 1차 가공
+			   
+			   str += "<li data-gdsNum='" + this.gdsNum + "'>"
+			     + "<div class='userInfo'>"
+			     + "<span class='userName'>" + this.userName + "</span>"
+			     + "<span class='date'>" + repDate + "</span>"
+			     + "</div>"
+			     + "<div class='replyContent'>" + this.repCon + "</div>"
+			     + "</li>";           
+		});
+		
+		$("section.replyList ol").html(str);
+	});
+}
+
+</script>
+	
 </head>
 <body>
 
@@ -172,20 +204,21 @@
 						<section class="replyForm">
 							<form role="form" method="post" autocomplete="off">
 								
-								<input type="hidden" name="gdsNum" value="${view.gdsNum }">
+								<input type="hidden" id="gdsNum" name="gdsNum" value="${view.gdsNum }">
 							
 								<div class="input_area">
 									<textarea name="repCon" id="repCon"></textarea>
 								</div>
 								<div class="input_area">
-									<button type="submit" id="reply_btn">댓글 남기기</button>
+									<button type="button" id="reply_btn">댓글 남기기</button>
 								</div>
 							</form>
 						</section>
 					</c:if>
 					
 					<section class="replyList">
-						<ol><!-- 
+						<ol>
+						<!-- 
 							<c:forEach items="${reply }" var="reply">
 								<li>
 									<div class="userInfo">
@@ -196,6 +229,9 @@
 								</li>
 							</c:forEach> -->
 						</ol>
+						<script>
+							replyList();
+						</script>
 					</section>
 				</div>
 				
@@ -215,12 +251,34 @@
 	</footer>
 	
 </div>
+
 <script>
-// ========================= 댓글 ajax 
-// ajax를 사용하는 이유 : 상세 페이지에는 이미지가 있는데, ajax없이 매번 새로 로딩하면 쓸데없는 데이터 사용이 많아짐
-	var gdsN
+// ========================== 댓글 작성
+	$("#reply_btn").click(function(){
+		
+		var formObj = $(".replyForm form[role='form']");
+		var gdsNum = $("#gdsNum").val();
+		var repCon = $("#repCon").val();
+		
+		var data = {
+				gdsNum : gdsNum,
+				repCon : repCon
+		};
+		
+		$.ajax({
+			url : "/shop/view/registReply",
+			type : "post",
+			data : data,
+			success : function(){
+				replyList();
+				$("#repCon").val("");
+			}
+		});
+		
+	});
 
 </script>
+
 <script>
 // ========================== 구입수량 +, - 기능
 	$(".plus").click(function(){
@@ -234,11 +292,12 @@
 		}
 	});
 	
+	
 	$(".minus").click(function(){
 		var num = $(".numBox").val();
 		var minusNum = Number(num) - 1;
 		
-		if(plusNum <= 0){ // 0보다 구매수량이 작아지지않도록
+		if(minusNum <= 0){ // 0보다 구매수량이 작아지지않도록
 			$(".numBox").val(num);
 		}else {
 			$(".numBox").val(minusNum);
