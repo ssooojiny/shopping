@@ -132,7 +132,7 @@ function replyList(){
 			     + "</div>"
 			     + "<div class='replyContent'>" + this.repCon + "</div>"
 			     
-			     + "<c:if test='${member != null}'>"
+			     + "<c:if test='${member != null}'>" // 로그인해야 수정,삭제 버튼이 보이도록
 			     
 			      + "<div class='replyFooter'>"
 			      + "<button type='button' class='modify' data-repNum='" + this.repNum + "'>M</button>"
