@@ -23,10 +23,13 @@ public interface ShopDAO {
 	// 댓글 리스트
 	public List<ReplyListVO> replyList(int gdsNum) throws Exception;
 	
-	// 댓굴 삭제
+	// 댓글 삭제
 	public void deleteReply(ReplyVO reply) throws Exception;
 	
 	// 아이디 체크
 	public String idCheck(int repNum) throws Exception;
+	
+	// 댓글 수정
+	public void modifyReply(ReplyVO reply) throws Exception;
 
 }

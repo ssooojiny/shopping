@@ -54,9 +54,16 @@ public class ShopServiceImpl implements ShopService {
 		dao.deleteReply(reply);
 	}
 
+	// 아이디 체크
 	@Override
 	public String idCheck(int repNum) throws Exception {
 		return dao.idCheck(repNum);
+	}
+
+	// 댓글 수정
+	@Override
+	public void modifyReply(ReplyVO reply) throws Exception {
+		dao.modifyReply(reply);
 	}
 
 	

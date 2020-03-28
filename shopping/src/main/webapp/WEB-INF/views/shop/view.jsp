@@ -100,6 +100,15 @@
 		 section.replyList div.replyFooter button { font-size:14px; border: 1px solid #999; background:none; margin-right:10px; }
 	</style>
 	
+	<style>
+	 	 div.replyModal { position:relative; z-index:1; display:none;}
+		 div.modalBackground { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0, 0, 0, 0.8); z-index:-1; }
+		 div.modalContent { position:fixed; top:20%; left:calc(50% - 250px); width:500px; height:270px; padding:20px 10px; background:#fff; border:2px solid #666; }
+		 div.modalContent textarea { font-size:16px; font-family:'맑은 고딕', verdana; padding:10px; width:480px; height:200px; }
+		 div.modalContent button { font-size:18px; padding:5px 10px; margin:10px 0; background:#fff; border:1px solid #ccc; }
+		 div.modalContent button.modal_cancel { margin-left:20px; }
+	</style>
+	
 	
 <script>
 // ========================= 댓글 ajax 
@@ -116,19 +125,21 @@ function replyList(){
 			   // 테이블에 저장된 날짜 데이터와 컨트롤러에서 뷰로 보낼때의 날짜 데이터 형식이 다르기 때문에
 			   // toLocaleDateString()으로 1차 가공
 			   
-			   str += "<li data-gdsNum='" + this.gdsNum + "'>"
+			   str += "<li data-repNum='" + this.repNum + "'>"
 			     + "<div class='userInfo'>"
 			     + "<span class='userName'>" + this.userName + "</span>"
 			     + "<span class='date'>" + repDate + "</span>"
 			     + "</div>"
 			     + "<div class='replyContent'>" + this.repCon + "</div>"
 			     
+			     + "<c:if test='${member != null}'>"
 			     
 			      + "<div class='replyFooter'>"
 			      + "<button type='button' class='modify' data-repNum='" + this.repNum + "'>M</button>"
 			      + "<button type='button' class='delete' data-repNum='" + this.repNum + "'>D</button>"
 			      + "</div>"
 			     
+			     + "</c:if>"
 			     
 			     + "</li>";           
 		});
@@ -242,6 +253,26 @@ function replyList(){
 						<script>
 							replyList();
 						</script>
+						
+						<script>
+						// ========================== 모달 on
+							$(document).on("click", ".modify", function(){
+								//$(".replyModal").attr("style", "display:block;");
+								$(".replyModal").fadeIn(200);
+								
+								var repNum = $(this).attr("data-repNum");
+								var repCon = $(this).parent().parent().children(".replyContent").text();
+								// M버튼의 parent는 <div class="replyFooter>"
+								// <div class="replyFooter">의 parent 는 <li data-repNum="repNum">
+								// <li data-repNum="repNum">의 자식중 클래스가 replyCotent인것의 text를 부여
+								
+								
+								
+								
+								$(".modal_repCon").val(repCon);
+								$(".modal_modify_btn").attr("data-repNum", repNum);
+							});
+						</script>
 					</section>
 				</div>
 				
@@ -261,6 +292,64 @@ function replyList(){
 	</footer>
 	
 </div>
+
+<div class="replyModal">
+	<div class="modalContent">
+		<div>
+			<textarea class="modal_repCon" name="modal_repCon"></textarea>
+		</div>
+		
+		<div>
+			<button type="button" class="modal_modify_btn">수정</button>
+			<button type="button" class="modal_cancel_btn">취소</button>
+		</div>
+	</div>
+	
+	<div class="modalBackground"></div>
+</div>
+
+<script>
+// ========================= 모달 댓글 수정버튼 클릭 기능
+$(".modal_modify_btn").click(function(){
+	var modifyConfirm = confirm("정말로 수정하시겠습니까?");
+	
+	if(modifyConfirm){
+		var data = {
+				repNum : $(this).attr("data-repNum"),
+				repCon : $(".modal_repCon").val()
+		};
+		
+		$.ajax({
+			url : "/shop/view/modifyReply",
+			type : "post",
+			data : data,
+			success : function(result){
+				if(result == 1){
+					replyList();
+					$(".replyModal").fadeOut(200);
+				}else {
+					alert("작성자 본인만 수정할 수 있습니다.");
+				}
+			},
+			error : function(){
+				alert("로그인해주세요.");
+			}
+		});
+	}
+});
+
+
+
+</script>
+
+
+<script>
+// ========================== 모달 off
+	$(".modal_cancel_btn").on("click", function(){
+		//$(".replyModal").attr("style", "display:none;");
+		$(".replyModal").fadeOut(200);
+	});
+</script>
 
 <script>
 // ========================== 댓글 작성
