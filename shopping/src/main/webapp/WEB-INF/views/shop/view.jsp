@@ -96,6 +96,8 @@
 		 section.replyList div.userInfo .userName { font-size:24px; font-weight:bold; }
 		 section.replyList div.userInfo .date { color:#999; display:inline-block; margin-left:10px; }
 		 section.replyList div.replyContent { padding:10px; margin:20px 0; }
+		 
+		 section.replyList div.replyFooter button { font-size:14px; border: 1px solid #999; background:none; margin-right:10px; }
 	</style>
 	
 	
@@ -120,6 +122,14 @@ function replyList(){
 			     + "<span class='date'>" + repDate + "</span>"
 			     + "</div>"
 			     + "<div class='replyContent'>" + this.repCon + "</div>"
+			     
+			     
+			      + "<div class='replyFooter'>"
+			      + "<button type='button' class='modify' data-repNum='" + this.repNum + "'>M</button>"
+			      + "<button type='button' class='delete' data-repNum='" + this.repNum + "'>D</button>"
+			      + "</div>"
+			     
+			     
 			     + "</li>";           
 		});
 		
@@ -276,6 +286,38 @@ function replyList(){
 		});
 		
 	});
+
+</script>
+
+<script>
+// ========================= 댓글 삭제
+// 댓글 리스트는 스크립트로 인해 생성된 동적인 HTML코드로, 일반적인 클릭 메서드 .click()이 아니라 .on()을 씀
+	$(document).on("click",".delete", function(){
+		
+		var deleteConfirm = confirm("정말로 삭제하시겠습니까?");
+		
+		if(deleteConfirm){
+			var data = {repNum : $(this).attr("data-repNum")};
+			
+			$.ajax({
+				url : "/shop/view/deleteReply",
+				type : "post",
+				data : data,
+				success : function(result){
+					if(result == 1){
+						replyList();
+					}else {
+						alert("작성자 본인만 할 수 있습니다.");
+					}
+				},
+				error : function(){
+					alert("로그인해주세요.");
+				}
+			});
+		}
+	
+	});
+
 
 </script>
 

@@ -197,7 +197,7 @@ public class AdminController {
 			  
 			  logger.info(ckUploadPath);
 			  
-			  String callback = req.getParameter("CKEditorFuncNum");
+//			  String callback = req.getParameter("CKEditorFuncNum");
 			  printWriter = res.getWriter();
 			  String fileUrl = "/ckUpload/" + uid + "_" + fileName;  // 작성화면
 			  

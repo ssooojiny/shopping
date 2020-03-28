@@ -1,8 +1,10 @@
 package com.shopping.controller;
 
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -89,9 +91,30 @@ public class ShopController {
 		logger.info("getReplyList() 실행");
 		
 		List<ReplyListVO> reply = service.replyList(gdsNum);
-		
-		System.out.println(reply.get(0).getUserId());
-		
 		return reply;
+	}
+	
+	// 댓글 삭제
+	@ResponseBody
+	@RequestMapping(value = "/view/deleteReply", method = RequestMethod.POST)
+	public int getReplyList(ReplyVO reply, HttpSession session) throws Exception {
+		logger.info("getReplyList()");
+		
+		int result = 0;
+		
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		String userId = service.idCheck(reply.getRepNum());
+	
+		if(member.getUserId().equals(userId)) {
+			  
+			  reply.setUserId(member.getUserId());
+			  service.deleteReply(reply);
+			  
+			  result = 1;
+			 }
+
+
+			
+		return result;
 	}
 }
