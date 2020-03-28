@@ -1,10 +1,8 @@
 package com.shopping.controller;
 
-import java.io.PrintWriter;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -16,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shopping.domain.CartListVO;
+import com.shopping.domain.CartVO;
 import com.shopping.domain.GoodsViewVO;
 import com.shopping.domain.MemberVO;
 import com.shopping.domain.ReplyListVO;
@@ -132,5 +132,35 @@ public class ShopController {
 		}
 		
 		return result;
+	}
+	
+	// 장바구니 담기
+	@ResponseBody
+	@RequestMapping(value="/view/addCart", method = RequestMethod.POST)
+	public int addCart(CartVO cart, HttpSession session) throws Exception {
+		int result = 0;
+		
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		
+		if(member != null) {
+			cart.setUserId(member.getUserId());
+			service.addCart(cart);
+			result = 1;
+		}
+		
+		return result;
+	}
+	
+	// 장바구니 목록
+	@RequestMapping(value="/cartList", method=RequestMethod.GET)
+	public void getCartList(HttpSession session, Model model) throws Exception {
+		logger.info("getCartList() 실행");
+		
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		String userId = member.getUserId();
+		
+		List<CartListVO> cartList = service.cartList(userId);
+		
+		model.addAttribute("cartList", cartList);
 	}
 }

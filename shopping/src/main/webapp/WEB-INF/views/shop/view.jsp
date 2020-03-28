@@ -206,7 +206,7 @@ function replyList(){
 						</p>
 						
 						<p class="addToCart">
-							<button type="button">장바구니에 담기</button>
+							<button type="button" class="addCart_btn">장바구니에 담기</button>
 						</p>
 					</div>
 					
@@ -307,6 +307,40 @@ function replyList(){
 	
 	<div class="modalBackground"></div>
 </div>
+<!-- ------------------------------------------------------------------------------------------------ -->
+<script>
+// ========================= 장바구니 담기
+	$(".addCart_btn").click(function(){
+		var gdsNum = $("#gdsNum").val();
+		var cartStock = $(".numBox").val();
+		
+		var data = {
+				gdsNum : gdsNum,
+				cartStock : cartStock
+		};
+		
+		$.ajax({
+			url : "/shop/view/addCart",
+			type : "post",
+			data : data,
+			success : function(result){
+				
+				if(result == 1){
+					alert("장바구니에 담겼습니다.");
+					$(".numBox").val("1");
+				}else {
+					alert("로그인 후 사용할 수 있습니다.");
+					$(".numBox").val("1");
+				}
+				
+				
+			},
+			error : function(){
+				alert("장바구니에 담기 실패했습니다.");
+			}
+		});
+	});
+</script>
 
 <script>
 // ========================= 모달 댓글 수정버튼 클릭 기능
