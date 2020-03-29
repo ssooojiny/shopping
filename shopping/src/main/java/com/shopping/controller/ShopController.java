@@ -163,4 +163,36 @@ public class ShopController {
 		
 		model.addAttribute("cartList", cartList);
 	}
+	
+	// 장바구니 삭제
+	@ResponseBody
+	@RequestMapping(value="/deleteCart", method=RequestMethod.POST)
+	public int deleteCart(HttpSession session, @RequestParam(value="chbox[]")List<String> chArr, CartVO cart) throws Exception {
+		logger.info("deleteCart() 실행");
+		
+		MemberVO member = (MemberVO) session.getAttribute("member");
+		String userId = member.getUserId();
+		
+		int result = 0;
+		int cartNum = 0;
+		
+		if(member != null) {
+			cart.setUserId(userId);
+		
+				for(String i : chArr) {
+					cartNum = Integer.parseInt(i);
+					cart.setCartNum(cartNum);
+					service.deleteCart(cart);
+					// ajax에서 전송받는 배열 chbox 리스트형 변수 chArr로 받고 for문으로 chArr이 가진 값 갯수만큼 반복
+			}
+			
+			
+			
+			result = 1;
+		}
+		
+		
+		
+		return result;
+	}
 }

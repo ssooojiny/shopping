@@ -6,6 +6,8 @@
 <head>
 	<title>ssoo</title>
 	
+	<!-- jQuery -->
+	<script src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
 	
 	<style>
 	
@@ -69,11 +71,22 @@
 		 section#content ul li img { width:250px; height:250px; }
 		 section#content ul li::after { content:""; display:block; clear:both; }
 		 section#content div.thumb { float:left; width:250px; }
-		 section#content div.gdsInfo { float:right; width:calc(100% - 270px); }
+		 section#content div.gdsInfo { float:right; width:calc(100% - 300px); }
 		 section#content div.gdsInfo { font-size:20px; line-height:2; }
 		 section#content div.gdsInfo span { display:inline-block; width:100px; font-weight:bold; margin-right:10px; }
 		 section#content div.gdsInfo .delete { text-align:right; }
-		 section#content div.gdsInfo .delete button { font-size:22px; padding:5px 10px; border:1px solid #eee; background:#eee;}
+		 section#content div.gdsInfo .delete button { font-size:15px; padding:5px 10px; border:1px solid #eee; background:#eee;}
+		 
+		.allCheck { float:left; width:200px; }
+		.allCheck input { width:16px; height:16px; }
+		.allCheck label { margin-left:10px; }
+		.delBtn { float:right; width:300px; text-align:right; }
+		.delBtn button { font-size:15px; padding:5px 10px; border:1px solid #eee; background:#eee;}
+		
+		.checkBox { float:left; width:30px; }
+		.checkBox input { width:16px; height:16px; }
+	
+	
 	</style> 
 		
 </head>
@@ -97,8 +110,20 @@
 			<section id="content">
 			
 				<ul>
+					<li>
+						<div class="allCheck">
+							<input type="checkbox" name="allCheck" id="allCheck"/>
+							<label for="allCheck">전체 선택</label>
+						</div>
+						<div class="delBtn">
+							<button type="button" class="selectDelete_btn">선택 삭제</button>
+						</div>
+					</li>
 					<c:forEach items="${cartList }" var="cartList">
 						<li>
+							<div class="checkBox">
+								<input type="checkbox" name="chBox" class="chBox" data-cartNum="${cartList.cartNum }"/>
+							</div>
 							<div class="thumb">
 								<img src = "${cartList.gdsThumbImg }" />
 							</div>
@@ -112,11 +137,12 @@
 										<fmt:formatNumber pattern="###,###,###" value="${cartList.gdsPrice * cartList.cartStock }"/>원
 								</p>
 								
-								<div class="delet">
-									<button type="button" class="delete_btn">삭제</button>
+								<div class="delete">
+									<button type="button" class="delete_${cartList.cartNum}_btn" id="${cartList.cartNum }" data-cartNum="${cartList.cartNum }">삭제</button>
 								</div>
 							</div>
 						</li>
+						<hr />
 					</c:forEach>
 				</ul>
 			
@@ -136,5 +162,58 @@
 	</footer>
 
 </div>
+
+<!-- ----------------------------------------수꾸립뚜------------------------------------------------------ -->
+<script>
+// =================================================== 전체 선택 체크박스
+	$("#allCheck").click(function(){
+		var chk = $("#allCheck").prop("checked");
+		if(chk){
+			$(".chBox").prop("checked", true);
+		}else{
+			$(".chBox").prop("checked", false);
+		}
+	});
+	
+// ===================================================== 개별 체크박스 선택시 전체 체크박스 체크 해제
+
+	$(".chBox").click(function(){
+		$("#allCheck").prop("checked", false);
+	});
+	
+// ====================================================== 선택삭제버튼 기능
+	$(".selectDelete_btn").click(function(){
+		var confirm_val = confirm("정말 삭제하시겠습니까?");
+		
+		if(confirm_val){
+			var checkArr = new Array();
+			
+			$("input[class='chBox']:checked").each(function(){
+				checkArr.push($(this).attr("data-cartNum"));
+			});
+			
+			$.ajax({
+				url : "/shop/deleteCart",
+				type : "post",
+				data : {chbox : checkArr},
+				success : function(result){
+					
+					if(result == 1){
+						location.href = "/shop/cartList";
+					}else {
+						alert("삭제에 실패했습니다.");
+					}
+				
+				}
+			});
+		}
+	});
+
+// ========================================================== 개별 삭제 버튼 기능
+// 목록 하나만 지우는데 배열을 사용하는 이유는 컨트롤러에 있는 메서드를 재사용하기위해
+
+
+</script>
+
 </body>
 </html>

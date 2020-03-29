@@ -73,5 +73,10 @@
 				on c.gdsNum = g.gdsNum
 			where c.userId = #{userId}
 	</select>
+	
+	<!-- 장바구니 삭제 -->
+	<delete id="deleteCart">
+		delete tbl_cart where cartNum = #{cartNum} and userId = #{userId}
+	</delete>
 
 </mapper>
