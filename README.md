@@ -1,9 +1,10 @@
 # shopping mall
 
-* spring MVC
-* oracleDB
+* spring framework
+* oracleDB 
 * Eclipse
-* ckEditor
+* tomcat 8.5
+* ckEditor 4.14.0
 
 - 회원가입, 로그인
 - 관리자
